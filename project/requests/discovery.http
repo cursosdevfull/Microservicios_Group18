@@ -1,0 +1,12 @@
+### Get service instance by name
+get http://localhost:3050/api/v1/services/name/gateway
+
+### Emit heartbeat for service instance
+put http://localhost:3050/api/v1/services/5b46e382-13c4-464d-899d-c5f0d6d6842d/heartbeat
+
+
+### Get health check status for all services
+get http://localhost:3050/api/v1/services/healthcheck
+
+### Get service registry stats
+get http://localhost:3050/api/v1/services/stats

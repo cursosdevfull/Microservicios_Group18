@@ -1,0 +1,7 @@
+post http://localhost:3000/api/v1/appointment
+content-type: application/json
+
+{
+   "slotId": 1000,
+   "patientId": 345
+}
