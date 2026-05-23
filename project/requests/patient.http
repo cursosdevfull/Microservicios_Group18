@@ -1,0 +1,11 @@
+post http://localhost:3000/api/v1/patient
+content-type: application/json
+
+{
+   "name": "Javier",
+   "lastname": "Gomez",
+   "email": "javier.gomez@email.com",
+   "countryISO": "CL",
+   "age": 30,
+   "password": "password123"
+}
