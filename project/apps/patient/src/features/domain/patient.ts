@@ -10,6 +10,7 @@ export type PatientMandatoryFields = {
 
 export type PatientOptionalFields = {
     patientId: number;
+    refreshToken: string;
 }
 
 export type PatientFields = PatientMandatoryFields & Partial<PatientOptionalFields>;
@@ -23,6 +24,7 @@ export class Patient {
     private email: string;
     private password: string;
     private countryISO: COUNTRY_ISO;
+    private refreshToken?: string;
 
     constructor(fields: PatientFields) {
         if (fields.patientId) this.patientId = fields.patientId;
@@ -36,6 +38,8 @@ export class Patient {
         this.email = fields.email;
         this.password = fields.password;
         this.countryISO = fields.countryISO;
+
+        if (fields.refreshToken) this.refreshToken = fields.refreshToken;
     }
 
     get properties(): PatientFields {
@@ -49,6 +53,10 @@ export class Patient {
         if (this.patientId) {
             result.patientId = this.patientId;
         }
+        if (this.refreshToken) {
+            result.refreshToken = this.refreshToken;
+        }
+
         return result;
     }
 

@@ -19,4 +19,7 @@ export class PatientEntity {
 
     @Column({ type: "varchar", length: 2 })
     countryISO!: string;
+
+    @Column({ type: "varchar", length: 50 })
+    refreshToken!: string
 }

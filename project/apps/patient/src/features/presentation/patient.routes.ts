@@ -14,6 +14,7 @@ class Routes {
 
         this.router.post("/patient", controller.create.bind(controller));
         this.router.post("/patient/login", controller.login.bind(controller));
+        this.router.post("/patient/get-new-access-token", controller.getNewAccessToken.bind(controller));
 
     }
 

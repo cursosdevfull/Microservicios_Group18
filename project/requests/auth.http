@@ -6,3 +6,11 @@ content-type: application/json
    "email": "javier.gomez@email.com",
    "password": "password123"
 }
+
+### Get new access token
+post http://localhost:3000/api/v1/auth/get-new-access-token
+content-type: application/json
+
+{
+   "refreshToken": "a63d92e6-3266-4720-b929-9eefbe96fd3b"
+}

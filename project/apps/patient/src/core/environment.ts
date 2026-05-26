@@ -15,6 +15,8 @@ const envSchema = z.object({
     DB_SYNCHRONIZE: z.coerce.boolean().default(true),
     DB_LOGGING: z.coerce.boolean().default(false),
     DB_POOL_SIZE: z.coerce.number().default(10),
+    JWT_SECRET: z.string(),
+    JWT_EXPIRES_IN: z.string(),
 })
 
 type Env = z.infer<typeof envSchema>

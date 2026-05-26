@@ -9,3 +9,12 @@ content-type: application/json
    "age": 30,
    "password": "password123"
 }
+
+### Login
+post http://localhost:3070/api/v1/patient/login
+content-type: application/json
+
+{
+   "email": "javier.gomez@email.com",
+   "password": "password123"
+}

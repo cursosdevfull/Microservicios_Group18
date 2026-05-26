@@ -1,7 +1,8 @@
 import { Patient } from "@domain";
+import { ITokens } from "../tokens";
 
 export type ApplicationPort = {
     create(patient: Patient): Promise<void>;
     findByEmail(email: string): Promise<Patient | null>;
-    login(email: string, password: string): Promise<boolean>;
+    findByRefreshToken(refreshToken: string): Promise<Patient | null>;
 }

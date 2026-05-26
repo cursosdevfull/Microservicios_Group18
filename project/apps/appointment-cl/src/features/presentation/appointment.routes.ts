@@ -10,8 +10,10 @@ export class Routes {
         });
 
         this.router.post("/appointment", (req, res) => {
+            const traceId = req.headers["x-trace-id"] || "N/A";
+            console.log("Trace ID for appointment CL request:", traceId); // Debugging line to check the generated trace ID
             res.status(200).json({ message: "Appointment CL endpoint hit!" })
-        })        
+        })
     }
 
     public getRouter(): Router {

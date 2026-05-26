@@ -2,7 +2,6 @@ import { COUNTRY_ISO, Patient } from "@domain";
 import { ApplicationPort } from "../domain/ports";
 import { Database } from "@core/bootstrap";
 import { PatientEntity } from "@adapters";
-import { comparePassword } from "@core/services/hash";
 
 export class PatientAdapter implements ApplicationPort {
     async create(patient: Patient): Promise<void> {
@@ -30,23 +29,30 @@ export class PatientAdapter implements ApplicationPort {
             email: patientEntity.email,
             password: patientEntity.password,
             countryISO: patientEntity.countryISO as COUNTRY_ISO,
+            refreshToken: patientEntity.refreshToken,
         }
         return new Patient(props);
     }
 
-    async login(email: string, password: string): Promise<boolean> {
-        const patient = await this.findByEmail(email);
+    async findByRefreshToken(refreshToken: string): Promise<Patient | null> {
+        const repository = Database.dataSource.getRepository(PatientEntity)
 
-        if (!patient) {
-            return false
+        const patientEntity = await repository.findOneBy({ refreshToken });
+
+        if (!patientEntity) {
+            return null;
         }
 
-        const isPasswordValid = await comparePassword(password, patient.properties.password);
-        if (!isPasswordValid) {
-            return false
+        const props = {
+            patientId: patientEntity.patientId,
+            name: patientEntity.name,
+            lastname: patientEntity.lastname,
+            email: patientEntity.email,
+            password: patientEntity.password,
+            countryISO: patientEntity.countryISO as COUNTRY_ISO,
+            refreshToken: patientEntity.refreshToken,
         }
-
-        return true;
+        return new Patient(props);
     }
 
 }

@@ -10,9 +10,11 @@ export class Routes {
         });
 
         this.router.post("/appointment", (req, res) => {
-           //throw new Error("Simulated error for testing")
+            //throw new Error("Simulated error for testing")
+            const traceId = req.headers["x-trace-id"] || "N/A";
+            console.log("Trace ID for appointment CO request:", traceId); // Debugging line to check the generated trace ID
             res.status(200).json({ message: "Appointment CO endpoint hit!" })
-        })        
+        })
     }
 
     public getRouter(): Router {

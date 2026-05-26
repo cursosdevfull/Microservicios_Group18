@@ -15,11 +15,15 @@ export class Routes {
             const countryISO = ["CO", "CL", "PE"][Math.floor(Math.random() * 3)]
 
             try {
+                const traceId = req.headers["x-trace-id"] || "N/A";
+                console.log("Trace ID for enrich request:", traceId); // Debugging line to check the generated trace ID
                 const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment`)
                 const appointmentUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/appointment`
-                const response = await axios.post(appointmentUrl, { ...req.body, countryISO });
+                const response = await axios.post(appointmentUrl, { ...req.body, countryISO }, { headers: { "x-trace-id": traceId } });
                 res.json(response.data);
             } catch (error) {
+                const traceId = req.headers["x-trace-id"] || "N/A";
+                console.error("Trace ID for enrich request:", traceId); // Debugging line to check the generated trace ID
                 res.status(500).json({ message: "Error forwarding request to appointment service", error });
             }
         })
