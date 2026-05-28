@@ -20,8 +20,8 @@ export class Routes {
                 const enrichUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/enrich`
                 const response = await axios.post(enrichUrl, req.body, { headers: { "x-trace-id": traceId } });
                 res.json(response.data);
-            } catch (error) {
-                res.status(500).json({ message: "Error forwarding request to enrich service", error });
+            } catch (error: any) {
+                res.status(500).json({ message: "Error forwarding request to enrich service", error: error.response.data.message });
             }
         });
 
@@ -44,7 +44,6 @@ export class Routes {
                 console.log("Trace ID for auth login request:", traceId); // Debugging line to check the generated trace ID
                 const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/auth`)
                 const authUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/auth/login`
-                console.log("Auth URL:", authUrl); // Debugging line to check the constructed URL
                 const response = await axios.post(authUrl, req.body, { headers: { "x-trace-id": traceId } });
                 res.json(response.data);
             } catch (error) {
@@ -58,7 +57,6 @@ export class Routes {
                 console.log("Trace ID for get-new-access-token request:", traceId); // Debugging line to check the generated trace ID
                 const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/auth`)
                 const authUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/auth/get-new-access-token`
-                console.log("Auth URL:", authUrl); // Debugging line to check the constructed URL
                 const response = await axios.post(authUrl, req.body, { headers: { "x-trace-id": traceId } });
                 res.json(response.data);
             } catch (error) {

@@ -1,6 +1,15 @@
 import { Router } from "express";
 import axios from "axios";
 import { env } from "@core/index";
+import { CircuitBreaker, CircuitBreakerOpenError } from "@core/services";
+
+const enrichBreaker = new CircuitBreaker({
+    serviceName: "enrich-service",
+    failureThreshold: 3,
+    recoveryTimeout: 10000,
+    requestTimeout: 4000,
+    halfOpenSuccessThreshold: 1,
+})
 
 export class Routes {
     private readonly router: Router
@@ -19,12 +28,21 @@ export class Routes {
                 console.log("Trace ID for enrich request:", traceId); // Debugging line to check the generated trace ID
                 const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment`)
                 const appointmentUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/appointment`
-                const response = await axios.post(appointmentUrl, { ...req.body, countryISO }, { headers: { "x-trace-id": traceId } });
+                const response = await enrichBreaker.execute(() =>
+                    axios.post(appointmentUrl, { ...req.body, countryISO }, { headers: { "x-trace-id": traceId } })
+                );
                 res.json(response.data);
             } catch (error) {
                 const traceId = req.headers["x-trace-id"] || "N/A";
-                console.error("Trace ID for enrich request:", traceId); // Debugging line to check the generated trace ID
-                res.status(500).json({ message: "Error forwarding request to appointment service", error });
+
+                if (error instanceof CircuitBreakerOpenError) {
+                    console.error("Circuit breaker is open for enrich request with Trace ID:", traceId);
+                    res.status(503).json({ message: "Service temporarily unavailable", error });
+                } else {
+                    console.error("Trace ID for enrich request:", traceId); // Debugging line to check the generated trace ID
+                    res.status(500).json({ message: "Error forwarding request to appointment service", error });
+                }
+
             }
         })
     }

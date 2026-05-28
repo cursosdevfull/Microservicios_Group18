@@ -16,6 +16,12 @@ export class Routes {
 
             try {
                 const traceId = req.headers["x-trace-id"] || "N/A";
+
+                if (Math.random() < 0.3) {
+                    console.log("Simulating failure for appointment request with Trace ID:", traceId);
+                    throw new Error("Simulated random failure");
+                }
+
                 console.log("Trace ID for appointment request:", traceId); // Debugging line to check the generated trace ID
                 const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment-${countryISO.toLowerCase()}`)
                 const appointmentUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/appointment`
