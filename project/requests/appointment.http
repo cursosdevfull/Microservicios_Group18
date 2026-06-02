@@ -1,7 +1,18 @@
 post http://localhost:3000/api/v1/appointment
 content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJKYXZpZXIgR29tZXoiLCJpYXQiOjE3ODAzNjA4MDQsImV4cCI6MTc4MDM2NDQwNH0.hA6upbhrYhQBejANxlMng2JndGgMVpY3ioPKJwinaU8
 
 {
-   "slotId": 1000,
+   "slotId": 3000,
    "patientId": 345
+}
+
+###
+post http://localhost:3010/api/v1/appointment
+content-type: application/json
+
+{
+   "slotId": 2000,
+   "patientId": 345,
+   "countryISO": "CL"
 }

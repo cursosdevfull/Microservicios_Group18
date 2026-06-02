@@ -1,6 +1,10 @@
 import { Router } from "express";
 import axios from "axios";
 import { env } from "@core/index";
+import { IStep } from "../../core/services/step";
+import { AppointmentCountryStep } from "./steps/appointmentCountry";
+import { SalesforceStep } from "./steps/salesforce";
+import { SagaOrchestrator } from "@core/services/saga";
 
 export class Routes {
     private readonly router: Router
@@ -13,21 +17,43 @@ export class Routes {
 
         this.router.post("/appointment", async (req, res) => {
             const { countryISO } = req.body;
+            let sagaOrchestrator: SagaOrchestrator | null = null;
 
             try {
                 const traceId = req.headers["x-trace-id"] || "N/A";
 
-                if (Math.random() < 0.3) {
-                    console.log("Simulating failure for appointment request with Trace ID:", traceId);
-                    throw new Error("Simulated random failure");
-                }
+                /*  if (Math.random() < 0.3) {
+                     console.log("Simulating failure for appointment request with Trace ID:", traceId);
+                     throw new Error("Simulated random failure");
+                 } */
+
+                const steps: IStep[] = []
 
                 console.log("Trace ID for appointment request:", traceId); // Debugging line to check the generated trace ID
-                const serviceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment-${countryISO.toLowerCase()}`)
-                const appointmentUrl = `${serviceFromDiscovery.data.host}:${serviceFromDiscovery.data.port}/api/v1/appointment`
-                const response = await axios.post(appointmentUrl, req.body, { headers: { "x-trace-id": traceId } });
-                res.json(response.data);
+                const serviceAppointmentFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment-${countryISO.toLowerCase()}`)
+                const appointmentUrl = `${serviceAppointmentFromDiscovery.data.host}:${serviceAppointmentFromDiscovery.data.port}/api/v1/appointment`
+                const appointmentCompensationUrl = `${serviceAppointmentFromDiscovery.data.host}:${serviceAppointmentFromDiscovery.data.port}/api/v1/appointment-compensation`
+                // const responseAppointment = await axios.post(appointmentUrl, req.body, { headers: { "x-trace-id": traceId } });
+
+                steps.push(new AppointmentCountryStep(appointmentUrl, appointmentCompensationUrl, req.body, traceId))
+
+                const serviceSalesforceFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/salesforce`)
+                const salesforceUrl = `${serviceSalesforceFromDiscovery.data.host}:${serviceSalesforceFromDiscovery.data.port}/api/v1/salesforce`
+                const salesforceCompensationUrl = `${serviceSalesforceFromDiscovery.data.host}:${serviceSalesforceFromDiscovery.data.port}/api/v1/salesforce-compensation`
+                //await axios.post(salesforceUrl, req.body, { headers: { "x-trace-id": traceId } });
+
+                steps.push(new SalesforceStep(salesforceUrl, salesforceCompensationUrl, req.body, traceId))
+
+                sagaOrchestrator = new SagaOrchestrator(steps);
+                await sagaOrchestrator.execute();
+
+                //res.json(responseAppointment.data);
+                res.json({ message: "Appointment created successfully" });
             } catch (error) {
+                if (sagaOrchestrator) {
+                    await sagaOrchestrator.compensate();
+                }
+
                 const traceId = req.headers["x-trace-id"] || "N/A";
                 console.error("Trace ID for appointment request:", traceId); // Debugging line to check the generated trace ID
                 res.status(500).json({ message: "Error forwarding request to appointment service", error });

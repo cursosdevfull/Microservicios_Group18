@@ -14,6 +14,12 @@ export class Routes {
             console.log("Trace ID for appointment CL request:", traceId); // Debugging line to check the generated trace ID
             res.status(200).json({ message: "Appointment CL endpoint hit!" })
         })
+
+        this.router.post("/appointment-compensation", (req, res) => {
+            const traceId = req.headers["x-trace-id"] || "N/A";
+            console.log("Trace ID for appointment CL compensation request:", traceId); // Debugging line to check the generated trace ID
+            res.status(200).json({ message: "Appointment CL compensation endpoint hit!" })
+        })
     }
 
     public getRouter(): Router {
