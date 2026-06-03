@@ -7,7 +7,7 @@ const amqp = require("amqplib");
     const queueName = "MyQueue";
     await channel.assertQueue(queueName, { durable: true });
 
-    function consumeMessage(mgs) {
+    function consumeMessage(msg) {
         console.log(msg.content.toString())
     }
 
