@@ -1,10 +1,80 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "concurrency": "11",
+    "concurrency": "12",
     "tasks": {
         "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "discovery#dev:healthcheck": {
+            "cache": false
+        },
+        "appointment#dev": {
             "dependsOn": [
-                "^dev"
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "appointment-cl#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "appointment-co#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "appointment-dlq#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "appointment-pe#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "auth#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "enrich#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "gateway#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "patient#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
+            ],
+            "cache": false,
+            "persistent": true
+        },
+        "salesforce#dev": {
+            "dependsOn": [
+                "discovery#dev:healthcheck"
             ],
             "cache": false,
             "persistent": true

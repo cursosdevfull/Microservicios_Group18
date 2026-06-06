@@ -1,6 +1,6 @@
 post http://localhost:3000/api/v1/appointment
 content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJKYXZpZXIgR29tZXoiLCJpYXQiOjE3ODAzNjA4MDQsImV4cCI6MTc4MDM2NDQwNH0.hA6upbhrYhQBejANxlMng2JndGgMVpY3ioPKJwinaU8
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsIm5hbWUiOiJKYXZpZXIgR29tZXoiLCJpYXQiOjE3ODA3MDU2ODAsImV4cCI6MTc4MDcwOTI4MH0.KtOTDmaBMn_grNEk2305rIvpkpWPwTQBrip_h2bG80A
 
 {
    "slotId": 3000,

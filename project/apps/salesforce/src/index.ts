@@ -3,6 +3,9 @@ import "./core/index"
 import { app } from "./app"
 import { Server } from "@core/bootstrap"
 import { Discovery } from "@core/services/discovery"
+import { RabbimqConsumer } from "@core/services"
+import { ExchangeType } from "@core/types"
+import { env } from "./core/index"
 
 (async () => {
   try {
@@ -15,6 +18,15 @@ import { Discovery } from "@core/services/discovery"
     const discovery = new Discovery()
     await discovery.registerService()
     discovery.sendHeartbeat()
+
+    const consumer = new RabbimqConsumer()
+    await consumer.connect();
+    await consumer.configureExchange(env.EXCHANGE_NAME, env.EXCHANGE_TYPE as ExchangeType, env.EXCHANGE_NAME_DLQ, env.EXCHANGE_TYPE_DLQ as ExchangeType);
+    await consumer.configureQueue(env.QUEUE_NAME, env.ROUTING_KEY, { durable: true, deadLetterExchange: env.EXCHANGE_NAME_DLQ });
+    await consumer.consumer(env.QUEUE_NAME, (message) => {
+      console.log("================================");
+      console.log("Received message Salesforce:", message);
+    });
   } catch (err) {
     console.error("Error starting the server:", err);
     process.exit(1)
