@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { env } from "@core/index";
-import { RabbimqProducer } from "@core/services";
+import { KafkaProducer, RabbimqProducer } from "@core/services";
 import { ExchangeType } from "@core/types";
 
 export class Routes {
@@ -15,10 +15,13 @@ export class Routes {
         this.router.post("/appointment", async (req, res) => {
             const { countryISO } = req.body;
             //let sagaOrchestrator: SagaOrchestrator | null = null;
-            let publisher: RabbimqProducer | null = null;
+            //let publisher: RabbimqProducer | null = null;
 
             try {
                 const traceId = req.headers["x-trace-id"] || "N/A";
+
+                const producer = new KafkaProducer()
+                await producer.send(`APPOINTMENT_${countryISO}`, [{ ...req.body, traceId }]);
 
                 /*  if (Math.random() < 0.3) {
                      console.log("Simulating failure for appointment request with Trace ID:", traceId);
@@ -29,10 +32,10 @@ export class Routes {
 
                 console.log("Trace ID for appointment request:", traceId); // Debugging line to check the generated trace ID
 
-                publisher = new RabbimqProducer();
-                await publisher.connect();
-                await publisher.configureExchange(env.EXCHANGE_NAME, env.EXCHANGE_TYPE as ExchangeType);
-                await publisher.publish(`${env.ROUTING_KEY_PREFIX}.${countryISO}`, { ...req.body, traceId });
+                /*                 publisher = new RabbimqProducer();
+                                await publisher.connect();
+                                await publisher.configureExchange(env.EXCHANGE_NAME, env.EXCHANGE_TYPE as ExchangeType);
+                                await publisher.publish(`${env.ROUTING_KEY_PREFIX}.${countryISO}`, { ...req.body, traceId }); */
 
                 //const serviceAppointmentFromDiscovery = await axios.get(`${env.API_DISCOVERY_URL}/services/name/appointment-${countryISO.toLowerCase()}`)
                 //const appointmentUrl = `${serviceAppointmentFromDiscovery.data.host}:${serviceAppointmentFromDiscovery.data.port}/api/v1/appointment`
@@ -61,7 +64,7 @@ export class Routes {
                 console.error("Trace ID for appointment request:", traceId); // Debugging line to check the generated trace ID
                 res.status(500).json({ message: "Error forwarding request to appointment service", error });
             } finally {
-                publisher?.close();
+                //publisher?.close();
             }
         })
     }

@@ -10,7 +10,10 @@ const envSchema = z.object({
     RABBITMQ_URL: z.string().default("amqp://localhost:5672"),
     EXCHANGE_NAME: z.string().default("appointment_exchange"),
     EXCHANGE_TYPE: z.string().default("topic"),
-    ROUTING_KEY_PREFIX: z.string().default("APPOINTMENT")
+    ROUTING_KEY_PREFIX: z.string().default("APPOINTMENT"),
+    TOPIC_NAMES: z.string().default("APPOINTMENT_CL,APPOINTMENT_CO,APPOINTMENT_PE,APPOINTMENT_DLQ"),
+    CLIENT_ID: z.string().default("appointment-service"),
+    BROKER: z.string().default("localhost:9092")
 })
 
 type Env = z.infer<typeof envSchema>

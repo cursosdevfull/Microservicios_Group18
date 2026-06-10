@@ -1,3 +1,6 @@
 export * from "./discovery"
 export * from "./rabbitmq-consumer"
 export * from "./rabbitmq-producer"
+export * from "./kafka-config"
+export * from "./kafka-consumer"
+export * from "./kafka-producer"

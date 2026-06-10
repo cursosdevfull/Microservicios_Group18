@@ -3,7 +3,7 @@ import "./core/index"
 import { app } from "./app"
 import { Server } from "@core/bootstrap"
 import { Discovery } from "@core/services/discovery"
-import { RabbimqConsumer } from "@core/services"
+import { KafkaConsumer, RabbimqConsumer } from "@core/services"
 import { env } from "./core"
 import { ExchangeType } from "@core/types"
 
@@ -19,14 +19,20 @@ import { ExchangeType } from "@core/types"
     await discovery.registerService()
     discovery.sendHeartbeat()
 
-    const consumer = new RabbimqConsumer()
-    await consumer.connect();
-    await consumer.configureExchange(env.EXCHANGE_NAME, env.EXCHANGE_TYPE as ExchangeType, env.EXCHANGE_NAME_DLQ, env.EXCHANGE_TYPE_DLQ as ExchangeType);
-    await consumer.configureQueue(env.QUEUE_NAME, env.ROUTING_KEY, { durable: true, deadLetterExchange: env.EXCHANGE_NAME_DLQ });
-    await consumer.consumer(env.QUEUE_NAME, (message) => {
+    const consumer = new KafkaConsumer()
+    consumer.consume(env.GROUP_ID, env.TOPIC_CONSUME, async (message) => {
       console.log("================================");
-      console.log("Received message CO:", message);
-    });
+      console.log("Received message CO desde Kafka:", message);
+    })    
+
+    /*     const consumer = new RabbimqConsumer()
+        await consumer.connect();
+        await consumer.configureExchange(env.EXCHANGE_NAME, env.EXCHANGE_TYPE as ExchangeType, env.EXCHANGE_NAME_DLQ, env.EXCHANGE_TYPE_DLQ as ExchangeType);
+        await consumer.configureQueue(env.QUEUE_NAME, env.ROUTING_KEY, { durable: true, deadLetterExchange: env.EXCHANGE_NAME_DLQ });
+        await consumer.consumer(env.QUEUE_NAME, (message) => {
+          console.log("================================");
+          console.log("Received message CO:", message);
+        }); */
 
   } catch (err) {
     console.error("Error starting the server:", err);

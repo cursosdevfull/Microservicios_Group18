@@ -22,7 +22,7 @@ export class Routes {
 
         this.router.post("/enrich", async (req, res) => {
             //const countryISO = ["CO", "CL", "PE"][Math.floor(Math.random() * 3)];
-            const countryISO = "PE"
+            const countryISO = "CL";
 
             try {
                 const traceId = req.headers["x-trace-id"] || "N/A";

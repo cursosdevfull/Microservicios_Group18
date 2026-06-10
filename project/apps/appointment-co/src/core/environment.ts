@@ -14,6 +14,9 @@ const envSchema = z.object({
     ROUTING_KEY: z.string().default("APPOINTMENT.CO"),
     EXCHANGE_NAME_DLQ: z.string().default("appointment_exchange_dlq"),
     EXCHANGE_TYPE_DLQ: z.string().default("topic"),
+    GROUP_ID: z.string().default("appointment-co-group"),
+    TOPIC_CONSUME: z.string().default("APPOINTMENT_CO"),
+    TOPIC_DLQ: z.string().default("APPOINTMENT_DLQ"),
 })
 
 type Env = z.infer<typeof envSchema>
