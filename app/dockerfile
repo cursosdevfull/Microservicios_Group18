@@ -1,0 +1,20 @@
+FROM node:24 AS base
+WORKDIR /app
+
+FROM base AS dependencies
+COPY ./package.json .
+COPY ./package-lock.json .
+RUN npm ci --only=production
+
+FROM base AS build
+COPY ./package.json .
+COPY ./package-lock.json .
+RUN npm ci
+COPY . .
+RUN npm run build
+
+FROM base AS production
+COPY --from=dependencies /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+
+CMD ["node", "dist/src/index.js"]
